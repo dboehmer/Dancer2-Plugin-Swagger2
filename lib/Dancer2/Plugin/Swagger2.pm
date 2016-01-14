@@ -107,8 +107,13 @@ sub default_cb {
     for my $controller (@candidates) {
         eval { load $controller };
         if ($@) {
-            DEBUG and warn "Can't load controller '$controller'";
-            next;
+            if ( $@ =~ m/^Can't locate / ) {    # module doesn't exist
+                DEBUG and warn "Controller '$controller' doesn't exist";
+                next;
+            }
+            else {                              # module doesn't compile
+                die $@;
+            }
         }
 
         my $cb = $controller->can($method);
