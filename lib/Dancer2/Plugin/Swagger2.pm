@@ -26,6 +26,8 @@ Import routes from Swagger file. Named arguments:
 
 =item C<cb>: custom callback generator/finder that returns callbacks to routes
 
+=item C<validate>: boolish value (default: true) telling if Swagger2 file shall be validated
+
 =back
 
 =cut
@@ -37,9 +39,19 @@ register swagger2 => sub {
     # get arguments/config values/defaults
     my $cb = $args{cb} || $conf->{cb} || \&default_cb;
     my $url = $args{url} or die "argument 'url' missing";
+    my $validate =
+        exists $args{validate}   ? !!$args{validate}
+      : exists $conf->{validate} ? !!$conf->{validate}
+      :                            1;
 
     # parse Swagger2 file
     my $swagger2 = Swagger2->new($url)->expand;
+
+    if ($validate) {
+        my @errors = $swagger2->validate;
+        @errors and die join "\n" => "Swagger2: Invalid spec:", @errors;
+    }
+
     my $basePath = $swagger2->api_spec->get('/basePath');
     my $paths    = $swagger2->api_spec->get('/paths');    # TODO might be undef?
 
