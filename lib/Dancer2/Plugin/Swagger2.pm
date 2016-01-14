@@ -40,6 +40,7 @@ register swagger2 => sub {
 
     # parse Swagger2 file
     my $swagger2 = Swagger2->new($url)->expand;
+    my $basePath = $swagger2->api_spec->get('/basePath');
     my $paths    = $swagger2->api_spec->get('/paths');    # TODO might be undef?
 
     while ( my ( $path => $path_spec ) = each $paths ) {
@@ -48,6 +49,8 @@ register swagger2 => sub {
 
         while ( my ( $method => $method_spec ) = each %$path_spec ) {
             my $coderef = $cb->( $conf, $dsl, \%args, $method_spec ) or next;
+
+            $basePath and $dancer2_path = $basePath . $dancer2_path;
 
             DEBUG and warn "Add route $method $dancer2_path";
 
