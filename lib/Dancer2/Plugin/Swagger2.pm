@@ -66,7 +66,20 @@ register swagger2 => sub {
 
             DEBUG and warn "Add route $method $dancer2_path";
 
-            $dsl->$method( $dancer2_path => $coderef );
+            my $params = $method_spec->{parameters};
+
+            $dsl->$method(
+                $dancer2_path => sub {
+
+                    # TODO validate input
+
+                    my $response = $coderef->();
+
+                    # TODO validate output
+
+                    return $response;
+                }
+            );
         }
     }
 };
