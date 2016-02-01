@@ -136,10 +136,12 @@ sub default_cb {
         eval { load $controller };
         if ($@) {
             if ( $@ =~ m/^Can't locate / ) {    # module doesn't exist
-                DEBUG and warn "Controller '$controller' doesn't exist";
-                next;
+                DEBUG and warn "Can't load '$controller'";
+
+                # don't do `next` here because controller could be
+                # defined in other package ...
             }
-            else {                              # module doesn't compile
+            else {    # module doesn't compile
                 die $@;
             }
         }
