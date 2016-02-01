@@ -9,7 +9,7 @@ use Swagger2;
 
 =head2 Debugging
 
-To see some more debug messages on STDOUT set environment variable C<SWAGGER2_DEBUG>
+To see some more debug messages on STDERR set environment variable C<SWAGGER2_DEBUG>
 to a true value.
 
 =cut
@@ -57,6 +57,9 @@ register swagger2 => sub {
 
     while ( my ( $path => $path_spec ) = each $paths ) {
         my $dancer2_path = $path;
+
+        # adapt Swagger2 syntax for URL path arguments to Dancer2 syntax
+        # '/path/{argument}' -> '/path/:argument'
         $dancer2_path =~ s/\{([^{}]+?)\}/:$1/g;
 
         while ( my ( $method => $method_spec ) = each %$path_spec ) {
