@@ -26,7 +26,11 @@ Import routes from Swagger file. Named arguments:
 
 =item C<cb>: custom callback generator/finder that returns callbacks to routes
 
-=item C<validate>: boolish value (default: true) telling if Swagger2 file shall be validated
+=item C<validate_spec>: boolish value (default: true) telling if Swagger2 file shall be validated by official Swagger specification
+
+=item C<validate_input>: boolish value (default: same as C<validate_spec>) telling if HTTP requests shall be validated by loaded specification (needs C<validate_spec> to be true)
+
+=item C<validate_output>: boolish value (default: same as C<validate_spec>) telling if HTTP responses shall be validated by loaded specification (needs C<validate_spec> to be true)
 
 =back
 
@@ -39,15 +43,27 @@ register swagger2 => sub {
     # get arguments/config values/defaults
     my $cb = $args{cb} || $conf->{cb} || \&default_cb;
     my $url = $args{url} or die "argument 'url' missing";
-    my $validate =
-        exists $args{validate}   ? !!$args{validate}
-      : exists $conf->{validate} ? !!$conf->{validate}
-      :                            1;
+    my $validate_spec =
+        exists $args{validate_spec}   ? !!$args{validate_spec}
+      : exists $conf->{validate_spec} ? !!$conf->{validate_spec}
+      :                                 1;
+    my $validate_input =
+        exists $args{validate_input}   ? !!$args{validate_input}
+      : exists $conf->{validate_input} ? !!$conf->{validate_input}
+      :                                  $validate_spec;
+    my $validate_output =
+        exists $args{validate_output}   ? !!$args{validate_output}
+      : exists $conf->{validate_output} ? !!$conf->{validate_output}
+      :                                   $validate_spec;
+
+    if ( ( $validate_input or $validate_output ) and not $validate_spec ) {
+        die "Cannot validate input/output with spec assured to be true";
+    }
 
     # parse Swagger2 file
     my $swagger2 = Swagger2->new($url)->expand;
 
-    if ($validate) {
+    if ($validate_spec) {
         my @errors = $swagger2->validate;
         @errors and die join "\n" => "Swagger2: Invalid spec:", @errors;
     }
@@ -77,11 +93,12 @@ register swagger2 => sub {
             $dsl->$method(
                 $dancer2_path => sub {
 
-                    # TODO validate input
+                    $validate_input
+                      and validate_input( $method_spec, $dsl->request );
 
                     my $response = $coderef->();
 
-                    # TODO validate output
+                    $validate_output and validate_output(...);
 
                     return $response;
                 }
