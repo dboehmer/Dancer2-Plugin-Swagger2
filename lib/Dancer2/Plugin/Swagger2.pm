@@ -71,6 +71,9 @@ register swagger2 => sub {
 
             my $params = $method_spec->{parameters};
 
+            # Dancer2 DSL keyword is different from HTTP method
+            $method eq 'delete' and $method = 'del';
+
             $dsl->$method(
                 $dancer2_path => sub {
 
