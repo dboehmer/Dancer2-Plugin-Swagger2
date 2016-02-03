@@ -55,7 +55,7 @@ register swagger2 => sub {
     my $basePath = $swagger2->api_spec->get('/basePath');
     my $paths    = $swagger2->api_spec->get('/paths');    # TODO might be undef?
 
-    while ( my ( $path => $path_spec ) = each $paths ) {
+    while ( my ( $path => $path_spec ) = each %$paths ) {
         my $dancer2_path = $path;
 
         # adapt Swagger2 syntax for URL path arguments to Dancer2 syntax
