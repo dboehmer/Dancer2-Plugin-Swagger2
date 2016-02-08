@@ -14,8 +14,7 @@ package MyApp;
 use Dancer2;
 use Dancer2::Plugin::Swagger2;
 
-# TODO move example Swagger2 spec to DATA section
-swagger2( url => Mojo::URL->new("$FindBin::Bin/example.yaml") );
+swagger2( url => Mojo::URL->new("data://main/myApp.yaml") );
 
 package main;
 
@@ -29,3 +28,18 @@ my $test = Plack::Test->create($app);
 my $res = $test->request( GET '/foo/bar' );
 is $res->code => 200;
 
+__DATA__
+@@ myApp.yaml
+---
+swagger: "2.0"
+info:
+  title: Example API
+  version: "1.0"
+basePath: /foo
+paths:
+  /bar:
+    get:
+      operationId: Foo::bar
+      responses:
+        200:
+          description: success
