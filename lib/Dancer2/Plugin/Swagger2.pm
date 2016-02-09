@@ -107,6 +107,65 @@ register swagger2 => sub {
     }
 };
 
+sub validate_input {
+    my ( $method_spec, $request ) = @_;
+
+    my @errors;
+    my $validator = Swagger2::SchemaValidator->new();
+
+    for my $parameter_spec ( @{ $method_spec->{parameters} } ) {
+        my $in       = $parameter_spec->{in};
+        my $name     = $parameter_spec->{name};
+        my $required = $parameter_spec->{required};
+
+        if ( $in eq 'body' ) {    # complex data structure in HTTP body
+            my $input  = $request->data;
+            my $schema = $parameter_spec->{schema};
+
+            push @errors, $validator->validate_input( $input, $schema );
+        }
+        else {    # simple key-value-pair in HTTP header/query/path/form
+            my $type = $parameter_spec->{type};
+            my @values;
+
+            if ( $in eq 'header' ) {
+                @values = $request->header($name);
+            }
+            elsif ( $in eq 'query' ) {
+                @values = $request->query_parameters->get_all($name);
+            }
+            elsif ( $in eq 'path' ) {
+                @values = $request->route_parameters->get_all($name);
+            }
+            elsif ( $in eq 'formData' ) {
+                @values = $request->body_parameters->get_all($name);
+            }
+            else { die "Unknown value for property 'in' of parameter '$name'" }
+
+            # TODO align error messages to output style of SchemaValidator
+            if ( @values == 0 and $required ) {
+                $required and push @errors, "No value for parameter '$name'";
+                next;
+            }
+            elsif ( @values > 1 ) {
+                push @errors, "Multiple values for parameter '$name'";
+                next;
+            }
+
+            my $value  = $values[0];
+            my $input  = { $name => $value };
+            my $schema = {
+                properties => { $name => $parameter_spec },
+                required => [ $required ? ($name) : () ],
+            };
+
+            push @errors, $validator->validate_input( $input, $schema );
+        }
+    }
+
+    return @errors;
+}
+
 =head2 default_cb
 
 Default method for finding a callback for a given C<operationId>. Can be
