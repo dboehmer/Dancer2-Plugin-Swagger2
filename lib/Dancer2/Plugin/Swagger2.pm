@@ -93,14 +93,31 @@ register swagger2 => sub {
             $dsl->$method(
                 $dancer2_path => sub {
 
-                    $validate_input
-                      and _validate_input( $method_spec, $dsl->request );
+                    if ($validate_input) {
+                        my @errors =
+                          _validate_input( $method_spec, $dsl->request );
+
+                        if (@errors) {
+                            DEBUG and warn "Invalid request: @errors\n";
+                            $dsl->status(400);
+                            return { errors => \@errors };
+                        }
+                    }
 
                     my $result = $coderef->();
 
-                    $validate_output
-                      and
-                      _validate_output( $method_spec, $result, $dsl->response );
+                    if ($validate_output) {
+                        my @errors = _validate_output( $method_spec, $result,
+                            $dsl->response );
+
+                        if (@errors) {
+                            DEBUG and warn "Invalid response: @errors\n";
+                            $dsl->status(500);
+
+                            # TODO hide details of server-side errors?
+                            return { errors => \@errors };
+                        }
+                    }
 
                     return $result;
                 }
