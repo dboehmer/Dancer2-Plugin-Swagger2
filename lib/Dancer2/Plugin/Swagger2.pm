@@ -41,7 +41,7 @@ register swagger2 => sub {
     my $conf = plugin_setting;
 
     # get arguments/config values/defaults
-    my $cb = $args{cb} || $conf->{cb} || \&default_cb;
+    my $cb = $args{cb} || $conf->{cb} || \&_default_cb;
     my $url = $args{url} or die "argument 'url' missing";
     my $validate_spec =
         exists $args{validate_spec}   ? !!$args{validate_spec}
@@ -94,11 +94,11 @@ register swagger2 => sub {
                 $dancer2_path => sub {
 
                     $validate_input
-                      and validate_input( $method_spec, $dsl->request );
+                      and _validate_input( $method_spec, $dsl->request );
 
                     my $response = $coderef->();
 
-                    $validate_output and validate_output(...);
+                    $validate_output and _validate_output(...);
 
                     return $response;
                 }
@@ -107,7 +107,9 @@ register swagger2 => sub {
     }
 };
 
-sub validate_input {
+register_plugin;
+
+sub _validate_input {
     my ( $method_spec, $request ) = @_;
 
     my @errors;
@@ -181,11 +183,11 @@ and returns a coderef on the first match.
 
 =cut
 
-sub default_cb {
+sub _default_cb {
     my ( $conf, $dsl, $args, $method_spec ) = @_;
 
     # from Dancer2 app
-    my $set = $args->{controller} || $conf->{controller};
+    my $namespace = $args->{controller} || $conf->{controller};
     my $app = $dsl->app->name;
 
     # from Swagger2 file
@@ -196,14 +198,14 @@ sub default_cb {
     }
 
     # different candidates possibly reflecting operationId
-    my @candidates = do {
-        if ($set) {
-            if ($module) { $set . '::' . $module, $module }
-            else         { $set }
+    my @controller_candidates = do {
+        if ($namespace) {
+            if ($module) { $namespace . '::' . $module, $module }
+            else         { $namespace }
         }
         else {
-            if ($module) {             # parens for better layout by Perl::Tidy
-                (
+            if ($module) {
+                (                      # parens for better layout by Perl::Tidy
                     $app . '::' . $module,
                     $app . '::Controller::' . $module,
                     $module,           # maybe a top level module name?
@@ -214,7 +216,7 @@ sub default_cb {
     };
 
     # check candidates
-    for my $controller (@candidates) {
+    for my $controller (@controller_candidates) {
         eval { load $controller };
         if ($@) {
             if ( $@ =~ m/^Can't locate / ) {    # module doesn't exist
@@ -243,7 +245,5 @@ sub default_cb {
     warn "Can't find any handler for operationId '$method_spec->{operationId}'";
     return;
 }
-
-register_plugin;
 
 1;
