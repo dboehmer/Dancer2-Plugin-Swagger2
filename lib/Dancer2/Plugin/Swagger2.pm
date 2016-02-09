@@ -96,11 +96,13 @@ register swagger2 => sub {
                     $validate_input
                       and _validate_input( $method_spec, $dsl->request );
 
-                    my $response = $coderef->();
+                    my $result = $coderef->();
 
-                    $validate_output and _validate_output(...);
+                    $validate_output
+                      and
+                      _validate_output( $method_spec, $result, $dsl->response );
 
-                    return $response;
+                    return $result;
                 }
             );
         }
@@ -113,7 +115,6 @@ sub _validate_input {
     my ( $method_spec, $request ) = @_;
 
     my @errors;
-    my $validator = Swagger2::SchemaValidator->new();
 
     for my $parameter_spec ( @{ $method_spec->{parameters} } ) {
         my $in       = $parameter_spec->{in};
@@ -124,7 +125,7 @@ sub _validate_input {
             my $input  = $request->data;
             my $schema = $parameter_spec->{schema};
 
-            push @errors, $validator->validate_input( $input, $schema );
+            push @errors, _validator()->validate_input( $input, $schema );
         }
         else {    # simple key-value-pair in HTTP header/query/path/form
             my $type = $parameter_spec->{type};
@@ -161,8 +162,56 @@ sub _validate_input {
                 required => [ $required ? ($name) : () ],
             };
 
-            push @errors, $validator->validate_input( $input, $schema );
+            push @errors, _validator()->validate_input( $input, $schema );
         }
+    }
+
+    return @errors;
+}
+
+sub _validate_output {
+    my ( $method_spec, $result, $response ) = @_;
+
+    my $responses = $method_spec->{responses};
+    my $status    = $response->status;
+
+    my @errors;
+
+    if ( my $response_spec = $responses->{$status} || $responses->{default} ) {
+
+        my $headers = $response_spec->{headers};
+
+        while ( my ( $name => $header_spec ) = each %$headers ) {
+            my @values = $response->header($name);
+
+            if ( $header_spec->{type} eq 'array' ) {
+                push @errors,
+                  _validator()->validate_input( \@values, $header_spec );
+            }
+            else {
+                if ( @values == 0 ) {
+                    next;    # you can't make a header 'required' in Swagger2
+                }
+                elsif ( @values > 1 ) {
+
+                  # TODO align error message to output style of Schem::Validator
+                    push @errors, "header '$name' has multiple values";
+                    next;
+                }
+
+                push @errors,
+                  _validator()->validate_input( $values[0], $header_spec );
+            }
+        }
+
+        if ( my $schema = $response_spec->{schema} ) {
+            push @errors, _validator()->validate_input( $result, $schema );
+        }
+    }
+    else {
+        # TODO Call validate_input($response, {}) like
+        #      in Mojolicious::Plugin::Swagger2?
+        # Swagger2-0.71/lib/Mojolicious/Plugin/Swagger2.pm line L315
     }
 
     return @errors;
@@ -245,5 +294,8 @@ sub _default_cb {
     warn "Can't find any handler for operationId '$method_spec->{operationId}'";
     return;
 }
+
+my $validator;
+sub _validator { $validator ||= Swagger2::SchemaValidator->new }
 
 1;
