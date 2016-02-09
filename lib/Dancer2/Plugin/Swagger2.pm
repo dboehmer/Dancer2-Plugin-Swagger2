@@ -37,7 +37,7 @@ Import routes from Swagger file. Named arguments:
 =cut
 
 register swagger2 => sub {
-    my ( $dsl, %args ) = plugin_args(@_);
+    my ( $dsl, %args ) = @_;
     my $conf = plugin_setting;
 
     # get arguments/config values/defaults
