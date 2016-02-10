@@ -173,13 +173,12 @@ sub _validate_input {
             }
 
             my $value  = $values[0];
-            my $input  = { $name => $value };
-            my $schema = {
-                properties => { $name => $parameter_spec },
-                required => [ $required ? ($name) : () ],
-            };
+            my %input  = ( $name => $value );
+            my %schema = ( properties => { $name => $parameter_spec } );
 
-            push @errors, _validator()->validate_input( $input, $schema );
+            $required and $schema{required} = [$name];
+
+            push @errors, _validator()->validate_input( \%input, \%schema );
         }
     }
 
