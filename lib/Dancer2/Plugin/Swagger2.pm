@@ -210,7 +210,7 @@ sub _validate_output {
                 }
                 elsif ( @values > 1 ) {
 
-                  # TODO align error message to output style of Schem::Validator
+                   # TODO align error message to output style of SchemaValidator
                     push @errors, "header '$name' has multiple values";
                     next;
                 }
