@@ -107,8 +107,9 @@ register swagger2 => sub {
                     my $result = $coderef->();
 
                     if ($validate_output) {
-                        my @errors = _validate_output( $method_spec, $result,
-                            $dsl->response );
+                        my @errors =
+                          _validate_output( $method_spec, $dsl->response,
+                            $result );
 
                         if (@errors) {
                             DEBUG and warn "Invalid response: @errors\n";
@@ -186,7 +187,7 @@ sub _validate_input {
 }
 
 sub _validate_output {
-    my ( $method_spec, $result, $response ) = @_;
+    my ( $method_spec, $response, $result ) = @_;
 
     my $responses = $method_spec->{responses};
     my $status    = $response->status;
