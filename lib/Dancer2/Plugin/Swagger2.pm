@@ -28,9 +28,9 @@ Import routes from Swagger file. Named arguments:
 
 =item C<validate_spec>: boolish value (default: true) telling if Swagger2 file shall be validated by official Swagger specification
 
-=item C<validate_input>: boolish value (default: same as C<validate_spec>) telling if HTTP requests shall be validated by loaded specification (needs C<validate_spec> to be true)
+=item C<validate_requests>: boolish value (default: same as C<validate_spec>) telling if HTTP requests shall be validated by loaded specification (needs C<validate_spec> to be true)
 
-=item C<validate_output>: boolish value (default: same as C<validate_spec>) telling if HTTP responses shall be validated by loaded specification (needs C<validate_spec> to be true)
+=item C<validate_responses>: boolish value (default: same as C<validate_spec>) telling if HTTP responses shall be validated by loaded specification (needs C<validate_spec> to be true)
 
 =back
 
@@ -40,24 +40,26 @@ register swagger2 => sub {
     my ( $dsl, %args ) = @_;
     my $conf = plugin_setting;
 
-    # get arguments/config values/defaults
+    ### get arguments/config values/defaults ###
+
     my $cb = $args{cb} || $conf->{cb} || \&_default_cb;
     my $url = $args{url} or die "argument 'url' missing";
     my $validate_spec =
         exists $args{validate_spec}   ? !!$args{validate_spec}
       : exists $conf->{validate_spec} ? !!$conf->{validate_spec}
       :                                 1;
-    my $validate_input =
-        exists $args{validate_input}   ? !!$args{validate_input}
-      : exists $conf->{validate_input} ? !!$conf->{validate_input}
-      :                                  $validate_spec;
-    my $validate_output =
-        exists $args{validate_output}   ? !!$args{validate_output}
-      : exists $conf->{validate_output} ? !!$conf->{validate_output}
-      :                                   $validate_spec;
+    my $validate_requests =
+        exists $args{validate_requests}   ? !!$args{validate_requests}
+      : exists $conf->{validate_requests} ? !!$conf->{validate_requests}
+      :                                     $validate_spec;
+    my $validate_responses =
+        exists $args{validate_responses}   ? !!$args{validate_responses}
+      : exists $conf->{validate_responses} ? !!$conf->{validate_responses}
+      :                                      $validate_spec;
 
-    if ( ( $validate_input or $validate_output ) and not $validate_spec ) {
-        die "Cannot validate input/output with spec assured to be true";
+    if ( ( $validate_requests or $validate_responses ) and not $validate_spec )
+    {
+        die "Cannot validate requests/responses with spec assured to be true";
     }
 
     # parse Swagger2 file
@@ -92,10 +94,9 @@ register swagger2 => sub {
 
             $dsl->$method(
                 $dancer2_path => sub {
-
-                    if ($validate_input) {
+                    if ($validate_requests) {
                         my @errors =
-                          _validate_input( $method_spec, $dsl->request );
+                          _validate_request( $method_spec, $dsl->request );
 
                         if (@errors) {
                             DEBUG and warn "Invalid request: @errors\n";
@@ -106,9 +107,9 @@ register swagger2 => sub {
 
                     my $result = $coderef->();
 
-                    if ($validate_output) {
+                    if ($validate_responses) {
                         my @errors =
-                          _validate_output( $method_spec, $dsl->response,
+                          _validate_response( $method_spec, $dsl->response,
                             $result );
 
                         if (@errors) {
@@ -129,7 +130,7 @@ register swagger2 => sub {
 
 register_plugin;
 
-sub _validate_input {
+sub _validate_request {
     my ( $method_spec, $request ) = @_;
 
     my @errors;
@@ -186,7 +187,7 @@ sub _validate_input {
     return @errors;
 }
 
-sub _validate_output {
+sub _validate_response {
     my ( $method_spec, $response, $result ) = @_;
 
     my $responses = $method_spec->{responses};

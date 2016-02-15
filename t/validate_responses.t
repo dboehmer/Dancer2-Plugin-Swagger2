@@ -32,7 +32,7 @@ sub first_error {
     my $response    = mock_response(@_);
 
     my @errors =
-      Dancer2::Plugin::Swagger2::_validate_output( $method_spec, $response,
+      Dancer2::Plugin::Swagger2::_validate_response( $method_spec, $response,
         $result );
 
     return $errors[0];

@@ -29,7 +29,7 @@ sub first_error {
     my $request = mock_request(%$request_data);
 
     my @errors =
-      Dancer2::Plugin::Swagger2::_validate_input( $method_spec, $request );
+      Dancer2::Plugin::Swagger2::_validate_request( $method_spec, $request );
 
     return $errors[0];
 }
