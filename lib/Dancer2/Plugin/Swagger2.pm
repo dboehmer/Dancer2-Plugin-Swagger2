@@ -283,6 +283,7 @@ sub _default_cb {
 
     # check candidates
     for my $controller (@controller_candidates) {
+        local $@;
         eval { load $controller };
         if ($@) {
             if ( $@ =~ m/^Can't locate / ) {    # module doesn't exist
