@@ -74,14 +74,14 @@ register swagger2 => sub {
     while ( my ( $path => $path_spec ) = each %$paths ) {
         my $dancer2_path = $path;
 
+        $basePath and $dancer2_path = $basePath . $dancer2_path;
+
         # adapt Swagger2 syntax for URL path arguments to Dancer2 syntax
         # '/path/{argument}' -> '/path/:argument'
         $dancer2_path =~ s/\{([^{}]+?)\}/:$1/g;
 
         while ( my ( $method => $method_spec ) = each %$path_spec ) {
             my $coderef = $cb->( $conf, $dsl, \%args, $method_spec ) or next;
-
-            $basePath and $dancer2_path = $basePath . $dancer2_path;
 
             DEBUG and warn "Add route $method $dancer2_path";
 
