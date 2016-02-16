@@ -83,7 +83,9 @@ register swagger2 => sub {
         $dancer2_path =~ s/\{([^{}]+?)\}/:$1/g;
 
         while ( my ( $method => $method_spec ) = each %$path_spec ) {
-            my $coderef = $cb->( $method_spec, $dsl, $conf, \%args ) or next;
+            my $coderef =
+              $cb->( $method_spec, $method, $path, $dsl, $conf, \%args )
+              or next;
 
             DEBUG and warn "Add route $method $dancer2_path";
 
@@ -251,7 +253,7 @@ and returns a coderef on the first match.
 =cut
 
 sub _default_cb {
-    my ( $method_spec, $dsl, $conf, $args, ) = @_;
+    my ( $method_spec, $http_method, $path, $dsl, $conf, $args, ) = @_;
 
     # from Dancer2 app
     my $namespace = $args->{controller} || $conf->{controller};
