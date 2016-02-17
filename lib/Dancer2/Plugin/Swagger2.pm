@@ -16,7 +16,7 @@ to a true value.
 
 sub DEBUG { !!$ENV{SWAGGER2_DEBUG} }
 
-=head2 swagger2(url => $url, (cb => \&cb)?)
+=head2 swagger2( url => $url, ... )
 
 Import routes from Swagger file. Named arguments:
 
@@ -24,7 +24,7 @@ Import routes from Swagger file. Named arguments:
 
 =item C<url>: URL to passed to C<Swagger2> module
 
-=item C<cb>: custom callback generator/finder that returns callbacks to routes
+=item C<controller_factory>: custom callback generator/finder that returns callbacks to routes
 
 =item C<validate_spec>: boolish value (default: true) telling if Swagger2 file shall be validated by official Swagger specification
 
@@ -42,7 +42,10 @@ register swagger2 => sub {
 
     ### get arguments/config values/defaults ###
 
-    my $cb = $args{cb} || $conf->{cb} || \&_default_cb;
+    my $controller_factory =
+         $args{controller_factory}
+      || $conf->{controller_factory}
+      || \&_default_controller_factory;
     my $url = $args{url} or die "argument 'url' missing";
     my $validate_spec =
         exists $args{validate_spec}   ? !!$args{validate_spec}
@@ -83,9 +86,9 @@ register swagger2 => sub {
         $dancer2_path =~ s/\{([^{}]+?)\}/:$1/g;
 
         while ( my ( $method => $method_spec ) = each %$path_spec ) {
-            my $coderef =
-              $cb->( $method_spec, $method, $path, $dsl, $conf, \%args )
-              or next;
+            my $coderef = $controller_factory->(
+                $method_spec, $method, $path, $dsl, $conf, \%args
+            ) or next;
 
             DEBUG and warn "Add route $method $dancer2_path";
 
@@ -237,10 +240,10 @@ sub _validate_response {
     return @errors;
 }
 
-=head2 default_cb
+=head2 default_controller_factory
 
 Default method for finding a callback for a given C<operationId>. Can be
-overriden by the C<cb> argument to C<swagger2> or config option.
+overriden by the C<controller_factory> argument to C<swagger2> or config option.
 
 The default uses the C<controller> argument/config option or the name of
 the app (possibly with C<::Controller> appended). If the C<operationId>
@@ -252,7 +255,7 @@ and returns a coderef on the first match.
 
 =cut
 
-sub _default_cb {
+sub _default_controller_factory {
     my ( $method_spec, $http_method, $path, $dsl, $conf, $args, ) = @_;
 
     # from Dancer2 app
