@@ -303,15 +303,12 @@ sub _default_controller_factory {
             }
         }
 
-        my $cb = $controller->can($method);
-
-        if ( not $cb ) {
-            DEBUG and warn "Controller '$controller' can't '$method'";
-            next;
+        if ( my $cb = $controller->can($method) ) {
+            return $cb;    # confirmed candidate
         }
-
-        # confirmed candidate, return coderef to controller method
-        $cb and return $cb;
+        else {
+            DEBUG and warn "Controller '$controller' can't '$method'";
+        }
     }
 
     # none found
