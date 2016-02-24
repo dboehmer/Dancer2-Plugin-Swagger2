@@ -254,6 +254,7 @@ and returns a coderef on the first match.
 =cut
 
 sub _default_controller_factory {
+    # TODO simplify argument list
     my ( $method_spec, $http_method, $path, $dsl, $conf, $args, ) = @_;
 
     # from Dancer2 app
