@@ -83,19 +83,19 @@ register swagger2 => sub {
         # '/path/{argument}' -> '/path/:argument'
         $dancer2_path =~ s/\{([^{}]+?)\}/:$1/g;
 
-        while ( my ( $method => $method_spec ) = each %$path_spec ) {
+        while ( my ( $http_method => $method_spec ) = each %$path_spec ) {
             my $coderef = $controller_factory->(
-                $method_spec, $method, $path, $dsl, $conf, \%args
+                $method_spec, $http_method, $path, $dsl, $conf, \%args
             ) or next;
 
-            DEBUG and warn "Add route $method $dancer2_path";
+            DEBUG and warn "Add route $http_method $dancer2_path";
 
             my $params = $method_spec->{parameters};
 
             # Dancer2 DSL keyword is different from HTTP method
-            $method eq 'delete' and $method = 'del';
+            $http_method eq 'delete' and $http_method = 'del';
 
-            $dsl->$method(
+            $dsl->$http_method(
                 $dancer2_path => sub {
                     if ($validate_requests) {
                         my @errors =
