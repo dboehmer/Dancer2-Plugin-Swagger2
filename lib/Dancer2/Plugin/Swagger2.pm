@@ -64,15 +64,15 @@ register swagger2 => sub {
     }
 
     # parse Swagger2 file
-    my $swagger2 = Swagger2->new($url)->expand;
+    my $spec = Swagger2->new($url)->expand;
 
     if ($validate_spec) {
-        my @errors = $swagger2->validate;
+        my @errors = $spec->validate;
         @errors and die join "\n" => "Swagger2: Invalid spec:", @errors;
     }
 
-    my $basePath = $swagger2->api_spec->get('/basePath');
-    my $paths    = $swagger2->api_spec->get('/paths');    # TODO might be undef?
+    my $basePath = $spec->api_spec->get('/basePath');
+    my $paths    = $spec->api_spec->get('/paths');    # TODO might be undef?
 
     while ( my ( $path => $path_spec ) = each %$paths ) {
         my $dancer2_path = $path;
