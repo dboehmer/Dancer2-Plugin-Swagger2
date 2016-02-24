@@ -43,9 +43,7 @@ register swagger2 => sub {
     ### get arguments/config values/defaults ###
 
     my $controller_factory =
-         $args{controller_factory}
-      || $conf->{controller_factory}
-      || \&_default_controller_factory;
+         $args{controller_factory} || \&_default_controller_factory;
     my $url = $args{url} or die "argument 'url' missing";
     my $validate_spec =
         exists $args{validate_spec}   ? !!$args{validate_spec}
