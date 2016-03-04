@@ -1,13 +1,14 @@
 package Dancer2::Plugin::Swagger2;
+# ABSTRACT: A Dancer2 plugin for creating routes from a Swagger2 spec
 
 use Dancer2 ':syntax';
 use Dancer2::Plugin;
 use Module::Load;
 use Swagger2;
 
-=head1 Dancer2::Plugin::Swagger2
+our $VERSION = '0.000';    # VERSION
 
-=head2 Debugging
+=head2 DEBUGGING
 
 To see some more debug messages on STDERR set environment variable C<SWAGGER2_DEBUG>
 to a true value.
