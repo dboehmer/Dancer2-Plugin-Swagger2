@@ -3,8 +3,6 @@
 use strict;
 use warnings;
 
-use lib 'lib/';
-
 use Test::Most tests => 1;
 
 bail_on_fail;
