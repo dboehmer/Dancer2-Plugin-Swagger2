@@ -6,7 +6,49 @@ Dancer2::Plugin::Swagger2 - A Dancer2 plugin for creating routes from a Swagger2
 
 version 0.001
 
-## Debugging
+## SYNOPSIS
+
+`example/my_app.pl`:
+
+    #!/usr/bin/env perl
+
+    use lib '../lib';
+
+    use Dancer2;
+    use Dancer2::Plugin::Swagger2;
+
+    swagger2( url => path( dirname(__FILE__), 'swagger2.yaml' ) );
+
+    sub my_controller {
+        return "Hello World!\n";
+    }
+
+    dance;
+
+`example/swagger2.pl`:
+
+    ---
+    swagger: "2.0"
+    info:
+      title: MyApp's API
+      version: "1.0"
+    basePath: /api
+    paths:
+      /welcome:
+        get:
+          operationId: my_controller
+          responses:
+            200:
+              description: success
+
+Then on the terminal run:
+
+    perl my_app.pl
+    curl http://localhost:3000/api/welcome
+
+You'll find the example files displayed above in the distribution and repository.
+
+## DEBUGGING
 
 To see some more debug messages on STDERR set environment variable `SWAGGER2_DEBUG`
 to a true value.

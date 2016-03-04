@@ -8,6 +8,23 @@ use Swagger2;
 
 our $VERSION = '0.000';    # VERSION
 
+=head2 SYNOPSIS
+
+C<example/my_app.pl>:
+
+{{ include('example/my_app.pl')->indent }}
+
+C<example/swagger2.pl>:
+
+{{ include('example/swagger2.yaml')->indent }}
+
+Then on the terminal run:
+
+    perl my_app.pl
+    curl http://localhost:3000/api/welcome
+
+You'll find the example files displayed above in the distribution and repository.
+
 =head2 DEBUGGING
 
 To see some more debug messages on STDERR set environment variable C<SWAGGER2_DEBUG>
