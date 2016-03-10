@@ -8,7 +8,7 @@ use Swagger2;
 
 our $VERSION = '0.000';    # VERSION
 
-=head2 SYNOPSIS
+=head1 SYNOPSIS
 
 C<example/my_app.pl>:
 
@@ -25,7 +25,7 @@ Then on the terminal run:
 
 You'll find the example files displayed above in the distribution and repository.
 
-=head2 DEBUGGING
+=head1 DEBUGGING
 
 To see some more debug messages on STDERR set environment variable C<SWAGGER2_DEBUG>
 to a true value.
@@ -33,6 +33,8 @@ to a true value.
 =cut
 
 sub DEBUG { !!$ENV{SWAGGER2_DEBUG} }
+
+=head1 METHODS
 
 =head2 swagger2( url => $url, ... )
 
@@ -335,5 +337,12 @@ sub _default_controller_factory {
 
 my $validator;
 sub _validator { $validator ||= Swagger2::SchemaValidator->new }
+
+=head1 ACKNOWLEDGEMENT
+
+This software has been developed with support from L<STRATO|https://www.strato.com/>.
+In German: Diese Software wurde mit Unterstützung von L<STRATO|https://www.strato.de/> entwickelt.
+
+=cut
 
 1;
