@@ -23,7 +23,7 @@ version 0.001
 
     dance;
 
-`example/swagger2.pl`:
+`example/swagger2.yaml`:
 
     ---
     swagger: "2.0"

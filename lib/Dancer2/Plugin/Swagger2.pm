@@ -14,7 +14,7 @@ C<example/my_app.pl>:
 
 {{ include('example/my_app.pl')->indent }}
 
-C<example/swagger2.pl>:
+C<example/swagger2.yaml>:
 
 {{ include('example/swagger2.yaml')->indent }}
 
