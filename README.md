@@ -6,7 +6,7 @@ Dancer2::Plugin::Swagger2 - A Dancer2 plugin for creating routes from a Swagger2
 
 version 0.001
 
-## SYNOPSIS
+# SYNOPSIS
 
 `example/my_app.pl`:
 
@@ -48,10 +48,12 @@ Then on the terminal run:
 
 You'll find the example files displayed above in the distribution and repository.
 
-## DEBUGGING
+# DEBUGGING
 
 To see some more debug messages on STDERR set environment variable `SWAGGER2_DEBUG`
 to a true value.
+
+# METHODS
 
 ## swagger2( url => $url, ... )
 
@@ -76,10 +78,15 @@ mentioned above and as a top level module name.
 The module warns as long as controller modules or methods can't be found
 and returns a coderef on the first match.
 
+# ACKNOWLEDGEMENT
+
+This software has been developed with support from [STRATO](https://www.strato.com/).
+In German: Diese Software wurde mit Unterstützung von [STRATO](https://www.strato.de/) entwickelt.
+
 # AUTHORS
 
-- Daniel Böhmer &lt;dboehmer@cpan.org>
-- Tina Müller &lt;cpan2@tinita.de>
+- Daniel Böhmer <dboehmer@cpan.org>
+- Tina Müller <cpan2@tinita.de>
 
 # COPYRIGHT AND LICENSE
 
