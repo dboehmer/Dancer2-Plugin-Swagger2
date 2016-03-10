@@ -12,8 +12,6 @@ version 0.001
 
     #!/usr/bin/env perl
 
-    use lib '../lib';
-
     use Dancer2;
     use Dancer2::Plugin::Swagger2;
 
