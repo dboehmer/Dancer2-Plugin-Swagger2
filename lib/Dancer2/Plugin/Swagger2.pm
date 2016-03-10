@@ -122,7 +122,7 @@ register swagger2 => sub {
                         if (@errors) {
                             DEBUG and warn "Invalid request: @errors\n";
                             $dsl->status(400);
-                            return { errors => \@errors };
+                            return { errors => [ map { "$_" } @errors ] };
                         }
                     }
 
@@ -138,7 +138,7 @@ register swagger2 => sub {
                             $dsl->status(500);
 
                             # TODO hide details of server-side errors?
-                            return { errors => \@errors };
+                            return { errors => [ map { "$_" } @errors ] };
                         }
                     }
 
