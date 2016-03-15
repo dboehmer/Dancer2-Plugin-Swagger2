@@ -5,6 +5,7 @@ use Dancer2 ':syntax';
 use Dancer2::Plugin;
 use Module::Load;
 use Swagger2;
+use Swagger2::SchemaValidator;
 
 our $VERSION = '0.000';    # VERSION
 
