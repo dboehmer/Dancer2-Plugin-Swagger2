@@ -50,7 +50,7 @@ Import routes from Swagger file. Named arguments:
 
 =over
 
-=item C<url>: URL to passed to C<Swagger2> module
+=item C<url>: URL to passed to L<Swagger2> module
 
 =item C<controller_factory>: custom callback generator/finder that returns callbacks to routes
 
