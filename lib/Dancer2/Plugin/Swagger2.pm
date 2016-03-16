@@ -9,6 +9,13 @@ use Swagger2::SchemaValidator;
 
 our $VERSION = '0.000';    # VERSION
 
+=head1 MIGRATING FROM DANCER1
+
+If you've been using Dancer1 before you might know L<Dancer::Plugin::Swagger>.
+Please note that that module's workflow is completely different! It is about
+creating the spec from the app. The module described in this text is about
+reading the spec and creating parts of the app for you.
+
 =head1 SYNOPSIS
 
 C<example/my_app.pl>:
