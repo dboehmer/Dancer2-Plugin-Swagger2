@@ -3,6 +3,11 @@
 use strict;
 use warnings;
 
+use Test::More;
+
+# XS module load failure fatal in eval block -> eval string
+eval "use YAML::XS; 1" or plan skip_all => "YAML::XS needed for this test";
+
 package MyApp;
 
 use Dancer2;
@@ -20,10 +25,6 @@ package main;
 
 use HTTP::Request::Common;
 use Plack::Test;
-use Test::More;
-
-# XS module load failure fatal in eval block -> eval string
-eval "use YAML::XS; 1" or plan skip_all => "YAML::XS needed for this test";
 
 plan tests => 5;
 
