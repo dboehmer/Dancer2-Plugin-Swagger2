@@ -4,7 +4,7 @@ Dancer2::Plugin::Swagger2 - A Dancer2 plugin for creating routes from a Swagger2
 
 # VERSION
 
-version 0.002
+version 0.002\_001
 
 # SYNOPSIS
 
@@ -46,6 +46,13 @@ Then on the terminal run:
 
 You'll find the example files displayed above in the distribution and repository.
 
+# MIGRATING FROM DANCER1
+
+If you've been using Dancer1 before you might know [Dancer::Plugin::Swagger](https://metacpan.org/pod/Dancer::Plugin::Swagger).
+Please note that that module's workflow is completely different! It is about
+creating the spec from the app. The module described in this text is about
+reading the spec and creating parts of the app for you.
+
 # DEBUGGING
 
 To see some more debug messages on STDERR set environment variable `SWAGGER2_DEBUG`
@@ -57,7 +64,7 @@ to a true value.
 
 Import routes from Swagger file. Named arguments:
 
-- `url`: URL to passed to `Swagger2` module
+- `url`: URL to passed to [Swagger2](https://metacpan.org/pod/Swagger2) module
 - `controller_factory`: custom callback generator/finder that returns callbacks to routes
 - `validate_spec`: boolish value (default: true) telling if Swagger2 file shall be validated by official Swagger specification
 - `validate_requests`: boolish value (default: same as `validate_spec`) telling if HTTP requests shall be validated by loaded specification (needs `validate_spec` to be true)
