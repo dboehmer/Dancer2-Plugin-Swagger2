@@ -14,12 +14,9 @@ version 0.002\_002
 
     use Dancer2;
     use Dancer2::Plugin::Swagger2;
-    use File::Basename ();
-    use File::Spec;
+    use Path::Tiny;
 
-    swagger2( url =>
-          File::Spec->catfile( File::Basename::dirname(__FILE__), 'swagger2.yaml' )
-    );
+    swagger2( url => path(__FILE__)->parent->child('swagger2.yaml') );
 
     sub my_controller {
         return "Hello World!\n";
