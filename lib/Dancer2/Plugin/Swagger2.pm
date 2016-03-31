@@ -53,15 +53,15 @@ Import routes from Swagger file. Named arguments:
 
 =over
 
-=item C<url>: URL to passed to L<Swagger2> module
+=item * C<url>: URL to passed to L<Swagger2> module
 
-=item C<controller_factory>: custom callback generator/finder that returns callbacks to routes
+=item * C<controller_factory>: custom callback generator/finder that returns callbacks to routes
 
-=item C<validate_spec>: boolish value (default: true) telling if Swagger2 file shall be validated by official Swagger specification
+=item * C<validate_spec>: boolish value (default: true) telling if Swagger2 file shall be validated by official Swagger specification
 
-=item C<validate_requests>: boolish value (default: same as C<validate_spec>) telling if HTTP requests shall be validated by loaded specification (needs C<validate_spec> to be true)
+=item * C<validate_requests>: boolish value (default: same as C<validate_spec>) telling if HTTP requests shall be validated by loaded specification (needs C<validate_spec> to be true)
 
-=item C<validate_responses>: boolish value (default: same as C<validate_spec>) telling if HTTP responses shall be validated by loaded specification (needs C<validate_spec> to be true)
+=item * C<validate_responses>: boolish value (default: same as C<validate_spec>) telling if HTTP responses shall be validated by loaded specification (needs C<validate_spec> to be true)
 
 =back
 
@@ -353,9 +353,9 @@ sub _validator { $validator ||= Swagger2::SchemaValidator->new }
 
 =over
 
-=item L<Mojolicious::Plugin::Swagger2> A similar plugin for the L<Mojolicious> Web framework
+=item * L<Mojolicious::Plugin::Swagger2> A similar plugin for the L<Mojolicious> Web framework
 
-=item L<http://swagger.io/>: Website of the Swagger alias OpenAPI Specification
+=item * L<http://swagger.io/>: Website of the Swagger alias OpenAPI Specification
 
 =back
 
