@@ -84,6 +84,11 @@ mentioned above and as a top level module name.
 The module warns as long as controller modules or methods can't be found
 and returns a coderef on the first match.
 
+# SEE ALSO
+
+- [Mojolicious::Plugin::Swagger2](https://metacpan.org/pod/Mojolicious::Plugin::Swagger2) A similar plugin for the [Mojolicious](https://metacpan.org/pod/Mojolicious) Web framework
+- [http://swagger.io/](http://swagger.io/): Website of the Swagger alias OpenAPI Specification
+
 # ACKNOWLEDGEMENT
 
 This software has been developed with support from [STRATO](https://www.strato.com/).

@@ -349,6 +349,16 @@ sub _default_controller_factory {
 my $validator;
 sub _validator { $validator ||= Swagger2::SchemaValidator->new }
 
+=head1 SEE ALSO
+
+=over
+
+=item L<Mojolicious::Plugin::Swagger2> A similar plugin for the L<Mojolicious> Web framework
+
+=item L<http://swagger.io/>: Website of the Swagger alias OpenAPI Specification
+
+=back
+
 =head1 ACKNOWLEDGEMENT
 
 This software has been developed with support from L<STRATO|https://www.strato.com/>.
