@@ -1,13 +1,16 @@
 package Dancer2::Plugin::Swagger2;
+
+use strict;
+use warnings;
+
 # ABSTRACT: A Dancer2 plugin for creating routes from a Swagger2 spec
+# VERSION
 
 use Dancer2 ':syntax';
 use Dancer2::Plugin;
 use Module::Load;
 use Swagger2;
 use Swagger2::SchemaValidator;
-
-our $VERSION = '0.000';    # VERSION
 
 =head1 MIGRATING FROM DANCER1
 
