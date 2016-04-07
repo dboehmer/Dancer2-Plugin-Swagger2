@@ -1,4 +1,5 @@
 # distribution files
+/.build/
 /Dancer2-Plugin-Swagger2-*/
 /Dancer2-Plugin-Swagger2-*.tar.gz
 
