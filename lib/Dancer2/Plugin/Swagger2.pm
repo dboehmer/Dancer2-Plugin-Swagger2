@@ -89,17 +89,19 @@ register swagger2 => sub {
       : exists $conf->{validate_responses} ? !!$conf->{validate_responses}
       :                                      $validate_spec;
 
-    if ( ( $validate_requests or $validate_responses ) and not $validate_spec )
-    {
-        die "Cannot validate requests/responses with spec assured to be true";
-    }
-
     # parse Swagger2 file
     my $spec = Swagger2->new($url)->expand;
 
-    if ($validate_spec) {
-        my @errors = $spec->validate;
-        @errors and die join "\n" => "Swagger2: Invalid spec:", @errors;
+    if ( $validate_spec or $validate_requests or $validate_responses ) {
+        if ( my @errors = $spec->validate ) {
+            if ($validate_spec) {
+                die join "\n" => "Swagger2: Invalid spec:", @errors;
+            }
+            else {
+                warn "Spec contains errors but"
+                  . " request/response validation is enabled!";
+            }
+        }
     }
 
     my $basePath = $spec->api_spec->get('/basePath');
