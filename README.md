@@ -4,7 +4,7 @@ Dancer2::Plugin::Swagger2 - A Dancer2 plugin for creating routes from a Swagger2
 
 # VERSION
 
-version 0.002\_002
+version 0.003
 
 # SYNOPSIS
 
