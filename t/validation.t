@@ -4,9 +4,9 @@ use strict;
 use warnings;
 
 use Test::More;
+use Test::Requires 'YAML::XS';
 
-# XS module load failure fatal in eval block -> eval string
-eval "use YAML::XS; 1" or plan skip_all => "YAML::XS needed for this test";
+plan tests => 5;
 
 package MyApp;
 
@@ -25,8 +25,6 @@ package main;
 
 use HTTP::Request::Common;
 use Plack::Test;
-
-plan tests => 5;
 
 my $app  = MyApp->to_app;
 my $test = Plack::Test->create($app);
