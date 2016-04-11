@@ -116,7 +116,21 @@ register swagger2 => sub {
         # '/path/{argument}' -> '/path/:argument'
         $dancer2_path =~ s/\{([^{}]+?)\}/:$1/g;
 
-        while ( my ( $http_method => $method_spec ) = each %$path_spec ) {
+        my @http_methods = sort keys %$path_spec;
+        # create OPTIONS route
+        $dsl->options(
+            $dancer2_path => sub {
+                $dsl->status(200);
+                $dsl->response->push_header(
+                    'Access-Control-Allow-Methods'
+                        => join ', ', 'OPTIONS', map uc, @http_methods
+                );
+                $dsl->push_header( 'Access-Control-Max-Age' => 60 * 60 * 24 );
+                return;
+            },
+        );
+        for my $http_method (@http_methods) {
+            my $method_spec = $path_spec->{ $http_method };
             my $coderef = $controller_factory->(
                 $method_spec, $http_method, $path, $dsl, $conf, \%args
             ) or next;
