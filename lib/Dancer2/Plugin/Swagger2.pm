@@ -224,8 +224,9 @@ sub _validate_request {
                 next;
             }
 
+
             my $value  = $values[0];
-            my %input  = ( $name => $value );
+            my %input  = defined $value ? ( $name => $value ) : ();
             my %schema = ( properties => { $name => $parameter_spec } );
 
             $required and $schema{required} = [$name];
