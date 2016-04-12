@@ -226,6 +226,17 @@ sub _validate_request {
 
 
             my $value  = $values[0];
+
+            # TODO steal more from Mojolicious::Plugin::Swagger2 ;-)
+            if ($type and defined ($value //= $parameter_spec->{default})) {
+                if (($type eq 'integer' or $type eq 'number') and $value =~ /^-?\d/) {
+                    $value += 0;
+                }
+                elsif ($type eq 'boolean') {
+                    $value = (!$value or $value eq 'false') ? '' : 1;
+                }
+            }
+
             my %input  = defined $value ? ( $name => $value ) : ();
             my %schema = ( properties => { $name => $parameter_spec } );
 
