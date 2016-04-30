@@ -57,6 +57,8 @@ Import routes from Swagger file. Named arguments:
 
 =item * C<controller_factory>: custom callback generator/finder that returns callbacks to routes
 
+=item * C<create_options_route>: autocreate additional route replying to OPTIONS requests based on Swagger data
+
 =item * C<validate_spec>: boolish value (default: true) telling if Swagger2 file shall be validated by official Swagger specification
 
 =item * C<validate_requests>: boolish value (default: same as C<validate_spec>) telling if HTTP requests shall be validated by loaded specification (needs C<validate_spec> to be true)
@@ -76,6 +78,10 @@ register swagger2 => sub {
     my $controller_factory =
          $args{controller_factory} || \&_default_controller_factory;
     my $url = $args{url} or die "argument 'url' missing";
+    my $create_options_route =
+        exists $args{create_options_route}   ? !!$args{create_options_route}
+      : exists $conf->{create_options_route} ? !!$conf->{create_options_route}
+      :                                        '';
     my $validate_spec =
         exists $args{validate_spec}   ? !!$args{validate_spec}
       : exists $conf->{validate_spec} ? !!$conf->{validate_spec}
@@ -118,17 +124,18 @@ register swagger2 => sub {
 
         my @http_methods = sort keys %$path_spec;
 
-        # create OPTIONS route
-        my $allow_methods = join ', ' => 'OPTIONS', map { uc } @http_methods;
-        $dsl->options(
-            $dancer2_path => sub {
-                $dsl->headers(
-                    Allow => $allow_methods,    # RFC 2616 HTTP/1.1
-                    'Access-Control-Allow-Methods' => $allow_methods,    # CORS
-                    'Access-Control-Max-Age'       => 60 * 60 * 24,
-                );
-            },
-        );
+        if ($create_options_route) {
+            my $allow_methods = join ', ' => 'OPTIONS', map uc, @http_methods;
+            $dsl->options(
+                $dancer2_path => sub {
+                    $dsl->headers(
+                        Allow => $allow_methods,    # RFC 2616 HTTP/1.1
+                        'Access-Control-Allow-Methods' => $allow_methods, # CORS
+                        'Access-Control-Max-Age'       => 60 * 60 * 24,
+                    );
+                },
+            );
+        }
 
         for my $http_method (@http_methods) {
             my $method_spec = $path_spec->{ $http_method };

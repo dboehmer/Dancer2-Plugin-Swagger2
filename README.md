@@ -67,6 +67,7 @@ Import routes from Swagger file. Named arguments:
 
 - `url`: URL to passed to [Swagger2](https://metacpan.org/pod/Swagger2) module
 - `controller_factory`: custom callback generator/finder that returns callbacks to routes
+- `create_options_route`: autocreate additional route replying to OPTIONS requests based on Swagger data
 - `validate_spec`: boolish value (default: true) telling if Swagger2 file shall be validated by official Swagger specification
 - `validate_requests`: boolish value (default: same as `validate_spec`) telling if HTTP requests shall be validated by loaded specification (needs `validate_spec` to be true)
 - `validate_responses`: boolish value (default: same as `validate_spec`) telling if HTTP responses shall be validated by loaded specification (needs `validate_spec` to be true)
