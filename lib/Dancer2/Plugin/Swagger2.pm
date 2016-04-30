@@ -117,18 +117,19 @@ register swagger2 => sub {
         $dancer2_path =~ s/\{([^{}]+?)\}/:$1/g;
 
         my @http_methods = sort keys %$path_spec;
+
         # create OPTIONS route
+        my $allow_methods = join ', ' => 'OPTIONS', map { uc } @http_methods;
         $dsl->options(
             $dancer2_path => sub {
-                $dsl->status(200);
-                $dsl->response->push_header(
-                    'Access-Control-Allow-Methods'
-                        => join ', ', 'OPTIONS', map uc, @http_methods
+                $dsl->headers(
+                    Allow => $allow_methods,    # RFC 2616 HTTP/1.1
+                    'Access-Control-Allow-Methods' => $allow_methods,    # CORS
+                    'Access-Control-Max-Age'       => 60 * 60 * 24,
                 );
-                $dsl->push_header( 'Access-Control-Max-Age' => 60 * 60 * 24 );
-                return;
             },
         );
+
         for my $http_method (@http_methods) {
             my $method_spec = $path_spec->{ $http_method };
             my $coderef = $controller_factory->(
