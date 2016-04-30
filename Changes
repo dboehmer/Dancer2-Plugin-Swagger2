@@ -1,0 +1,21 @@
+Revision history for Perl module Dancer2::Plugin::Swagger2
+
+TO BE RELEASED
+
+  * Added feature to create a HTTP OPTIONS route.
+
+0.03 2016-04-07
+
+  * Allowed request/response validation with invalid spec.
+  * Changed used Dist::Zilla plugins.
+  * Began encouraging usage of Path::Tiny.
+  * Extended documentation.
+
+0.02 2016-03-16
+
+  * Improved distribution metadata, e.g. requirements.
+  * Fixed filename in documentation.
+
+0.01 2016-03-10
+
+  * First release to CPAN.
