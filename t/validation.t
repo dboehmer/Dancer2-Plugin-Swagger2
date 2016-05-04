@@ -19,7 +19,7 @@ sub invalid { { key => 'value' } }
 
 sub valid { ['array'] }
 
-swagger2( url => Mojo::URL->new("data://main/myApp.yaml") );
+swagger2( url => 'data://main/myApp.yaml' );
 
 package main;
 
