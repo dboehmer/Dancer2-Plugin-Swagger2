@@ -6,7 +6,6 @@ use warnings;
 # ABSTRACT: A Dancer2 plugin for creating routes from a Swagger2 spec
 # VERSION
 
-use Dancer2 ':syntax';
 use Dancer2::Plugin;
 use Module::Load;
 use Swagger2;
@@ -154,7 +153,7 @@ register swagger2 => sub {
                 $dancer2_path => sub {
                     if ($validate_requests) {
                         my @errors =
-                          _validate_request( $method_spec, $dsl->request );
+                          _validate_request( $method_spec, $dsl->app->request );
 
                         if (@errors) {
                             DEBUG and warn "Invalid request: @errors\n";
