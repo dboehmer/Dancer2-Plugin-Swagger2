@@ -152,6 +152,8 @@ register swagger2 => sub {
 
             $dsl->$http_method(
                 $dancer2_path => sub {
+                    my @args = @_;
+
                     if ($validate_requests) {
                         my @errors =
                           _validate_request( $method_spec, $dsl->request );
@@ -163,7 +165,7 @@ register swagger2 => sub {
                         }
                     }
 
-                    my $result = $coderef->();
+                    my $result = $coderef->(@args);
 
                     if ($validate_responses) {
                         my @errors =
