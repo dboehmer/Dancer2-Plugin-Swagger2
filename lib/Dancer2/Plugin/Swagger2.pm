@@ -8,7 +8,7 @@ use warnings;
 
 use Dancer2 ':syntax';
 use Dancer2::Plugin;
-use Module::Load;
+use Module::Runtime 'use_module';
 use Swagger2;
 use Swagger2::SchemaValidator;
 
@@ -344,9 +344,8 @@ sub _default_controller_factory {
     # check candidates
     for my $controller (@controller_candidates) {
         local $@;
-        eval { load $controller };
-        if ($@) {
-            if ( $@ =~ m/^Can't locate / ) {    # module doesn't exist
+        if ( ! eval { use_module( $controller ); 1; } ) {
+            if ( $@ && $@ =~ m/^Can't locate / ) {    # module doesn't exist
                 DEBUG and warn "Can't load '$controller'";
 
                 # don't do `next` here because controller could be
