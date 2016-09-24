@@ -6,9 +6,8 @@ use warnings;
 # ABSTRACT: A Dancer2 plugin for creating routes from a Swagger2 spec
 # VERSION
 
-use Dancer2 ':syntax';
 use Dancer2::Plugin;
-use Module::Load;
+use Module::Runtime 'use_module';
 use Swagger2;
 use Swagger2::SchemaValidator;
 
@@ -152,9 +151,11 @@ register swagger2 => sub {
 
             $dsl->$http_method(
                 $dancer2_path => sub {
+                    my @args = @_;
+
                     if ($validate_requests) {
                         my @errors =
-                          _validate_request( $method_spec, $dsl->request );
+                          _validate_request( $method_spec, $dsl->app->request );
 
                         if (@errors) {
                             DEBUG and warn "Invalid request: @errors\n";
@@ -163,7 +164,7 @@ register swagger2 => sub {
                         }
                     }
 
-                    my $result = $coderef->();
+                    my $result = $coderef->(@args);
 
                     if ($validate_responses) {
                         my @errors =
@@ -356,9 +357,8 @@ sub _default_controller_factory {
     # check candidates
     for my $controller (@controller_candidates) {
         local $@;
-        eval { load $controller };
-        if ($@) {
-            if ( $@ =~ m/^Can't locate / ) {    # module doesn't exist
+        if ( ! eval { use_module( $controller ); 1; } ) {
+            if ( $@ && $@ =~ m/^Can't locate / ) {    # module doesn't exist
                 DEBUG and warn "Can't load '$controller'";
 
                 # don't do `next` here because controller could be
