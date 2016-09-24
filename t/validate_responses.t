@@ -7,7 +7,7 @@ use Hash::MultiValue;
 use Test::Most tests => 3;
 use Test::MockObject;
 
-use Dancer2::Plugin::Swagger2;
+use Dancer2::Plugin::OpenAPI;
 
 sub mock_response {
     my ( $status, %headers ) = @_;
@@ -32,7 +32,7 @@ sub first_error {
     my $response    = mock_response(@_);
 
     my @errors =
-      Dancer2::Plugin::Swagger2::_validate_response( $method_spec, $response,
+      Dancer2::Plugin::OpenAPI::_validate_response( $method_spec, $response,
         $result );
 
     return $errors[0];

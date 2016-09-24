@@ -1,7 +1,7 @@
 # distribution files
 /.build/
-/Dancer2-Plugin-Swagger2-*/
-/Dancer2-Plugin-Swagger2-*.tar.gz
+/Dancer2-Plugin-OpenAPI-*/
+/Dancer2-Plugin-OpenAPI-*.tar.gz
 
 # Devel::Cover output
 /cover_db/

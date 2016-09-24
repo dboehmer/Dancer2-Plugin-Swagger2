@@ -1,9 +1,9 @@
-package Dancer2::Plugin::Swagger2;
+package Dancer2::Plugin::OpenAPI;
 
 use strict;
 use warnings;
 
-# ABSTRACT: A Dancer2 plugin for creating routes from a Swagger2 spec
+# ABSTRACT: A Dancer2 plugin for creating routes from an OpenAPI spec
 # VERSION
 
 use Dancer2::Plugin;
@@ -26,7 +26,7 @@ C<example/my_app.pl>:
 
 C<example/swagger2.yaml>:
 
-{{ include('example/swagger2.yaml')->indent }}
+{{ include('example/openapi.yaml')->indent }}
 
 Then on the terminal run:
 
@@ -37,18 +37,18 @@ You'll find the example files displayed above in the distribution and repository
 
 =head1 DEBUGGING
 
-To see some more debug messages on STDERR set environment variable C<SWAGGER2_DEBUG>
+To see some more debug messages on STDERR set environment variable C<OPENAPI_DEBUG>
 to a true value.
 
 =cut
 
-sub DEBUG { !!$ENV{SWAGGER2_DEBUG} }
+sub DEBUG { !!$ENV{OPENAPI_DEBUG} }
 
 =head1 METHODS
 
-=head2 swagger2( url => $url, ... )
+=head2 openapi( url => $url, ... )
 
-Import routes from Swagger file. Named arguments:
+Import routes from OpenAPI file. Named arguments:
 
 =over
 
@@ -68,7 +68,7 @@ Import routes from Swagger file. Named arguments:
 
 =cut
 
-register swagger2 => sub {
+register openapi => sub {
     my ( $dsl, %args ) = @_;
     my $conf = plugin_setting;
 

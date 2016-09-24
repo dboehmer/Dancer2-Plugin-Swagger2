@@ -17,9 +17,9 @@ sub baz { shift->send_file( \"Comment ca va", content_type => 'text/plain' ) }
 package MyApp;
 
 use Dancer2;
-use Dancer2::Plugin::Swagger2;
+use Dancer2::Plugin::OpenAPI;
 
-swagger2( url => "data://main/swagger2.yaml" );
+openapi( url => "data://main/openapi.yaml" );
 
 package main;
 
@@ -38,7 +38,7 @@ like $res->content => qr/comment ca va/i;
 is $res->code      => 200;
 
 __DATA__
-@@ swagger2.yaml
+@@ openapi.yaml
 ---
 swagger: "2.0"
 info:

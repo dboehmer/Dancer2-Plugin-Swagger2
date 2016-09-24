@@ -1,10 +1,10 @@
 # NAME
 
-Dancer2::Plugin::Swagger2 - A Dancer2 plugin for creating routes from a Swagger2 spec
+Dancer2::Plugin::OpenAPI - A Dancer2 plugin for creating routes from an OpenAPI spec
 
 # VERSION
 
-version 0.003\_001
+version 0.003\_900
 
 # SYNOPSIS
 
@@ -13,10 +13,10 @@ version 0.003\_001
     #!/usr/bin/env perl
 
     use Dancer2;
-    use Dancer2::Plugin::Swagger2;
+    use Dancer2::Plugin::OpenAPI;
     use Path::Tiny;
 
-    swagger2( url => path(__FILE__)->sibling('swagger2.yaml') );
+    openapi( url => path(__FILE__)->sibling('openapi.yaml') );
 
     sub my_controller {
         return "Hello World!\n";
@@ -56,14 +56,14 @@ reading the spec and creating parts of the app for you.
 
 # DEBUGGING
 
-To see some more debug messages on STDERR set environment variable `SWAGGER2_DEBUG`
+To see some more debug messages on STDERR set environment variable `OPENAPI_DEBUG`
 to a true value.
 
 # METHODS
 
-## swagger2( url => $url, ... )
+## openapi( url => $url, ... )
 
-Import routes from Swagger file. Named arguments:
+Import routes from OpenAPI file. Named arguments:
 
 - `url`: URL to passed to [Swagger2](https://metacpan.org/pod/Swagger2) module
 - `controller_factory`: custom callback generator/finder that returns callbacks to routes

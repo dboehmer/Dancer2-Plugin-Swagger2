@@ -2,6 +2,10 @@ Revision history for Perl module Dancer2::Plugin::Swagger2
 
 TO BE RELEASED
 
+  * rename from Dancer2::Plugin::Swagger2 to Dancer2::Plugin::OpenAPI
+
+TO BE RELEASED
+
   * Added feature to create a HTTP OPTIONS route.
 
 0.03 2016-04-07

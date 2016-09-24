@@ -11,7 +11,7 @@ plan tests => 5;
 package MyApp;
 
 use Dancer2;
-use Dancer2::Plugin::Swagger2;
+use Dancer2::Plugin::OpenAPI;
 
 set serializer => 'JSON';
 
@@ -19,7 +19,7 @@ sub invalid { { key => 'value' } }
 
 sub valid { ['array'] }
 
-swagger2( url => 'data://main/myApp.yaml' );
+openapi( url => 'data://main/myApp.yaml' );
 
 package main;
 

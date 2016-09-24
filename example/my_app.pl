@@ -1,10 +1,10 @@
 #!/usr/bin/env perl
 
 use Dancer2;
-use Dancer2::Plugin::Swagger2;
+use Dancer2::Plugin::OpenAPI;
 use Path::Tiny;
 
-swagger2( url => path(__FILE__)->sibling('swagger2.yaml') );
+openapi( url => path(__FILE__)->sibling('openapi.yaml') );
 
 sub my_controller {
     return "Hello World!\n";

@@ -7,7 +7,7 @@ use Hash::MultiValue;
 use Test::Most tests => 6;
 use Test::MockObject;
 
-use Dancer2::Plugin::Swagger2;
+use Dancer2::Plugin::OpenAPI;
 
 sub mock_request {
     my %data = @_;
@@ -29,7 +29,7 @@ sub first_error {
     my $request = mock_request(%$request_data);
 
     my @errors =
-      Dancer2::Plugin::Swagger2::_validate_request( $method_spec, $request );
+      Dancer2::Plugin::OpenAPI::_validate_request( $method_spec, $request );
 
     return $errors[0];
 }
