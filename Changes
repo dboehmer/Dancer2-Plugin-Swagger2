@@ -3,6 +3,8 @@ Revision history for Perl module Dancer2::Plugin::Swagger2
 TO BE RELEASED
 
   * Added feature to create a HTTP OPTIONS route.
+  * Added logic for handling numbers and booleans
+  * Switched from Module::Load to Module::Runtime
 
 0.03 2016-04-07
 
