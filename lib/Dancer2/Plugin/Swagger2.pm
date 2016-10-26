@@ -44,6 +44,9 @@ to a true value.
 
 sub DEBUG { !!$ENV{SWAGGER2_DEBUG} }
 
+# for definition see http://www.json.org/number.gif
+sub RE_JSON_NUMBER { qr/ ^ -? \d+ ( \. \d+ )? ( [eE] [+-]? \d+ )? $ /x }
+
 =head1 METHODS
 
 =head2 swagger2( url => $url, ... )
@@ -236,8 +239,10 @@ sub _validate_request {
             my $value = $values[0] // $parameter_spec->{default};
 
             # TODO steal more from Mojolicious::Plugin::Swagger2 ;-)
-            if ( ( $type eq 'integer' or $type eq 'number' ) and $value =~ /^-?\d/ ) {
-                $value += 0;
+            if ( ( $type eq 'integer' or $type eq 'number' )
+                and $value =~ RE_JSON_NUMBER )
+            {
+                $value += 0;    # numify
             }
             elsif ( $type eq 'boolean' ) {
                 $value = ( !$value or $value eq 'false' ) ? '' : 1;
