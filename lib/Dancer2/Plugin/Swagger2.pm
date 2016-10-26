@@ -233,17 +233,14 @@ sub _validate_request {
                 next;
             }
 
-
-            my $value  = $values[0];
+            my $value = $values[0] // $parameter_spec->{default};
 
             # TODO steal more from Mojolicious::Plugin::Swagger2 ;-)
-            if ($type and defined ($value //= $parameter_spec->{default})) {
-                if (($type eq 'integer' or $type eq 'number') and $value =~ /^-?\d/) {
-                    $value += 0;
-                }
-                elsif ($type eq 'boolean') {
-                    $value = (!$value or $value eq 'false') ? '' : 1;
-                }
+            if ( ( $type eq 'integer' or $type eq 'number' ) and $value =~ /^-?\d/ ) {
+                $value += 0;
+            }
+            elsif ( $type eq 'boolean' ) {
+                $value = ( !$value or $value eq 'false' ) ? '' : 1;
             }
 
             my %input  = defined $value ? ( $name => $value ) : ();
