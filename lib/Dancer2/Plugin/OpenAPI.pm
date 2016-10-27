@@ -148,8 +148,7 @@ register openapi => sub {
                     my @args = @_;
 
                     if ($validate_requests) {
-                        my @errors =
-                          _validate_request( $method_spec, $dsl->app->request );
+                        my @errors = _validator()->validate_request( $dsl->app, $method_spec );
 
                         if (@errors) {
                             DEBUG and warn "Invalid request: @errors\n";
@@ -161,9 +160,8 @@ register openapi => sub {
                     my $result = $coderef->(@args);
 
                     if ($validate_responses) {
-                        my @errors =
-                          _validate_response( $method_spec, $dsl->response,
-                            $result );
+                        my @errors = _validator()->validate_response( $dsl->app, $method_spec,
+                            $dsl->response->status, $result );
 
                         if (@errors) {
                             DEBUG and warn "Invalid response: @errors\n";
@@ -182,123 +180,6 @@ register openapi => sub {
 };
 
 register_plugin;
-
-sub _validate_request {
-    my ( $method_spec, $request ) = @_;
-
-    my @errors;
-
-    for my $parameter_spec ( @{ $method_spec->{parameters} } ) {
-        my $in       = $parameter_spec->{in};
-        my $name     = $parameter_spec->{name};
-        my $required = $parameter_spec->{required};
-
-        if ( $in eq 'body' ) {    # complex data structure in HTTP body
-            my $input  = $request->data;
-            my $schema = $parameter_spec->{schema};
-
-            push @errors, _validator()->validate_input( $input, $schema );
-        }
-        else {    # simple key-value-pair in HTTP header/query/path/form
-            my $type = $parameter_spec->{type};
-            my @values;
-
-            if ( $in eq 'header' ) {
-                @values = $request->header($name);
-            }
-            elsif ( $in eq 'query' ) {
-                @values = $request->query_parameters->get_all($name);
-            }
-            elsif ( $in eq 'path' ) {
-                @values = $request->route_parameters->get_all($name);
-            }
-            elsif ( $in eq 'formData' ) {
-                @values = $request->body_parameters->get_all($name);
-            }
-            else { die "Unknown value for property 'in' of parameter '$name'" }
-
-            # TODO align error messages to output style of SchemaValidator
-            if ( @values == 0 and $required ) {
-                $required and push @errors, "No value for parameter '$name'";
-                next;
-            }
-            elsif ( @values > 1 ) {
-                push @errors, "Multiple values for parameter '$name'";
-                next;
-            }
-
-
-            my $value  = $values[0];
-
-            # TODO steal more from Mojolicious::Plugin::Swagger2 ;-)
-            if ($type and defined ($value //= $parameter_spec->{default})) {
-                if (($type eq 'integer' or $type eq 'number') and $value =~ /^-?\d/) {
-                    $value += 0;
-                }
-                elsif ($type eq 'boolean') {
-                    $value = (!$value or $value eq 'false') ? '' : 1;
-                }
-            }
-
-            my %input  = defined $value ? ( $name => $value ) : ();
-            my %schema = ( properties => { $name => $parameter_spec } );
-
-            $required and $schema{required} = [$name];
-
-            push @errors, _validator()->validate_input( \%input, \%schema );
-        }
-    }
-
-    return @errors;
-}
-
-sub _validate_response {
-    my ( $method_spec, $response, $result ) = @_;
-
-    my $responses = $method_spec->{responses};
-    my $status    = $response->status;
-
-    my @errors;
-
-    if ( my $response_spec = $responses->{$status} || $responses->{default} ) {
-
-        my $headers = $response_spec->{headers};
-
-        while ( my ( $name => $header_spec ) = each %$headers ) {
-            my @values = $response->header($name);
-
-            if ( $header_spec->{type} eq 'array' ) {
-                push @errors,
-                  _validator()->validate_input( \@values, $header_spec );
-            }
-            else {
-                if ( @values == 0 ) {
-                    next;    # you can't make a header 'required' in Swagger2
-                }
-                elsif ( @values > 1 ) {
-
-                   # TODO align error message to output style of SchemaValidator
-                    push @errors, "header '$name' has multiple values";
-                    next;
-                }
-
-                push @errors,
-                  _validator()->validate_input( $values[0], $header_spec );
-            }
-        }
-
-        if ( my $schema = $response_spec->{schema} ) {
-            push @errors, _validator()->validate_input( $result, $schema );
-        }
-    }
-    else {
-        # TODO Call validate_input($response, {}) like
-        #      in Mojolicious::Plugin::Swagger2?
-        # Swagger2-0.71/lib/Mojolicious/Plugin/Swagger2.pm line L315
-    }
-
-    return @errors;
-}
 
 =head2 default_controller_factory
 
