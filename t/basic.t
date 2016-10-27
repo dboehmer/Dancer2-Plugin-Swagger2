@@ -13,7 +13,7 @@ plan tests => 5;
 
 package MyApp::Controller::Foo;
 
-sub bar { "Hello_World!"  }
+sub bar { "Hello_World!" }
 
 sub baz { shift->send_file( \"Comment ca va", content_type => 'text/plain' ) }
 

@@ -75,7 +75,7 @@ register openapi => sub {
     ### get arguments/config values/defaults ###
 
     my $controller_factory =
-         $args{controller_factory} || \&_default_controller_factory;
+      $args{controller_factory} || \&_default_controller_factory;
     my $url = $args{url} or die "argument 'url' missing";
     my $create_options_route =
         exists $args{create_options_route}   ? !!$args{create_options_route}
@@ -122,8 +122,8 @@ register openapi => sub {
             $dsl->options(
                 $dancer2_path => sub {
                     $dsl->headers(
-                        Allow => $allow_methods,    # RFC 2616 HTTP/1.1
-                        'Access-Control-Allow-Methods' => $allow_methods, # CORS
+                        Allow                          => $allow_methods,    # RFC 2616 HTTP/1.1
+                        'Access-Control-Allow-Methods' => $allow_methods,    # CORS
                         'Access-Control-Max-Age'       => 60 * 60 * 24,
                     );
                 },
@@ -131,8 +131,8 @@ register openapi => sub {
         }
 
         for my $http_method (@http_methods) {
-            my $method_spec = $path_spec->{ $http_method };
-            my $coderef = $controller_factory->(
+            my $method_spec = $path_spec->{$http_method};
+            my $coderef     = $controller_factory->(
                 $method_spec, $http_method, $path, $dsl, $conf, \%args
             ) or next;
 
@@ -148,8 +148,7 @@ register openapi => sub {
                     my @args = @_;
 
                     if ($validate_requests) {
-                        my @errors =
-                          _validator()->validate_request( $dsl, $method_spec );
+                        my @errors = _validator()->validate_request( $dsl, $method_spec );
 
                         if (@errors) {
                             DEBUG and warn "Invalid request: @errors\n";
@@ -161,10 +160,8 @@ register openapi => sub {
                     my $result = $coderef->(@args);
 
                     if ($validate_responses) {
-                        my @errors =
-                          _validator()
-                          ->validate_response( $dsl, $method_spec,
-                            $dsl->response->status, $result );
+                        my @errors = _validator()
+                          ->validate_response( $dsl, $method_spec, $dsl->response->status, $result );
 
                         if (@errors) {
                             DEBUG and warn "Invalid response: @errors\n";
@@ -200,6 +197,7 @@ and returns a coderef on the first match.
 =cut
 
 sub _default_controller_factory {
+
     # TODO simplify argument list
     my ( $method_spec, $http_method, $path, $dsl, $conf, $args, ) = @_;
 
@@ -235,7 +233,7 @@ sub _default_controller_factory {
     # check candidates
     for my $controller (@controller_candidates) {
         local $@;
-        if ( ! eval { use_module( $controller ); 1; } ) {
+        if ( !eval { use_module($controller); 1; } ) {
             if ( $@ && $@ =~ m/^Can't locate / ) {    # module doesn't exist
                 DEBUG and warn "Can't load '$controller'";
 
