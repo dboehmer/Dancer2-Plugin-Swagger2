@@ -7,9 +7,9 @@ use warnings;
 # VERSION
 
 use Dancer2::Plugin;
+use JSON::Validator;
+use JSON::Validator::OpenAPI;
 use Module::Runtime 'use_module';
-use Swagger2;
-use Swagger2::SchemaValidator;
 
 =head1 MIGRATING FROM DANCER1
 
@@ -81,36 +81,30 @@ register openapi => sub {
         exists $args{create_options_route}   ? !!$args{create_options_route}
       : exists $conf->{create_options_route} ? !!$conf->{create_options_route}
       :                                        '';
-    my $validate_spec =
-        exists $args{validate_spec}   ? !!$args{validate_spec}
-      : exists $conf->{validate_spec} ? !!$conf->{validate_spec}
-      :                                 1;
     my $validate_requests =
         exists $args{validate_requests}   ? !!$args{validate_requests}
       : exists $conf->{validate_requests} ? !!$conf->{validate_requests}
-      :                                     $validate_spec;
+      :                                     1;
     my $validate_responses =
         exists $args{validate_responses}   ? !!$args{validate_responses}
       : exists $conf->{validate_responses} ? !!$conf->{validate_responses}
-      :                                      $validate_spec;
+      :                                      1;
 
-    # parse Swagger2 file
-    my $spec = Swagger2->new($url)->expand;
-
-    if ( $validate_spec or $validate_requests or $validate_responses ) {
-        if ( my @errors = $spec->validate ) {
-            if ($validate_spec) {
-                die join "\n" => "Swagger2: Invalid spec:", @errors;
-            }
-            else {
-                warn "Spec contains errors but"
-                  . " request/response validation is enabled!";
-            }
-        }
+    # depcrecation notice
+    if ( exists $args{validate_spec} or exists $conf->{validate_spec} ) {
+        warn "Config key 'validate_spec' is not supported anymore";
     }
 
-    my $basePath = $spec->api_spec->get('/basePath');
-    my $paths    = $spec->api_spec->get('/paths');    # TODO might be undef?
+    # validate $url against OpenAPI spec
+    # TODO is this step done implicitly in the next step?
+    my $openapi =
+      JSON::Validator->new->schema(JSON::Validator::OpenAPI::SPECIFICATION_URL);
+    $openapi->validate($url);
+
+    my $api = JSON::Validator->new->schema($url);
+
+    my $basePath = $api->schema->get('/basePath');
+    my $paths    = $api->schema->get('/paths');      # TODO might be undef?
 
     while ( my ( $path => $path_spec ) = each %$paths ) {
         my $dancer2_path = $path;
@@ -383,7 +377,7 @@ sub _default_controller_factory {
 }
 
 my $validator;
-sub _validator { $validator ||= Swagger2::SchemaValidator->new }
+sub _validator { $validator ||= JSON::Validator::OpenAPI->new }
 
 =head1 SEE ALSO
 
