@@ -4,7 +4,10 @@ use strict;
 use warnings;
 
 use Test::More;
-use Test::Requires 'YAML::XS';
+
+# XS module load failure fatal in eval block -> eval string
+eval "use YAML::XS; 1" || eval "use YAML::Syck; 1"
+  or plan skip_all => "YAML::XS or YAML::Syck needed for this test";
 
 plan tests => 5;
 
