@@ -8,7 +8,7 @@ use warnings;
 
 use Dancer2::Plugin;
 use JSON::Validator;
-use JSON::Validator::OpenAPI;
+use JSON::Validator::OpenAPI::Dancer2;
 use Module::Runtime 'use_module';
 
 =head1 MIGRATING FROM DANCER1
@@ -148,7 +148,8 @@ register openapi => sub {
                     my @args = @_;
 
                     if ($validate_requests) {
-                        my @errors = _validator()->validate_request( $dsl->app, $method_spec );
+                        my @errors =
+                          _validator()->validate_request( $dsl, $method_spec );
 
                         if (@errors) {
                             DEBUG and warn "Invalid request: @errors\n";
@@ -160,7 +161,9 @@ register openapi => sub {
                     my $result = $coderef->(@args);
 
                     if ($validate_responses) {
-                        my @errors = _validator()->validate_response( $dsl->app, $method_spec,
+                        my @errors =
+                          _validator()
+                          ->validate_response( $dsl, $method_spec,
                             $dsl->response->status, $result );
 
                         if (@errors) {
@@ -258,7 +261,7 @@ sub _default_controller_factory {
 }
 
 my $validator;
-sub _validator { $validator ||= JSON::Validator::OpenAPI->new }
+sub _validator { $validator ||= JSON::Validator::OpenAPI::Dancer2->new }
 
 =head1 SEE ALSO
 
