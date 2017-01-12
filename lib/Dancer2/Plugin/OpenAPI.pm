@@ -24,7 +24,7 @@ C<example/my_app.pl>:
 
 {{ include('example/my_app.pl')->indent }}
 
-C<example/swagger2.yaml>:
+C<example/openapi.yaml>:
 
 {{ include('example/openapi.yaml')->indent }}
 
@@ -184,7 +184,7 @@ register_plugin;
 =head2 default_controller_factory
 
 Default method for finding a callback for a given C<operationId>. Can be
-overriden by the C<controller_factory> argument to C<swagger2> or config option.
+overriden by the C<controller_factory> argument to C<openapi()> or config option.
 
 The default uses the C<controller> argument/config option or the name of
 the app (possibly with C<::Controller> appended). If the C<operationId>
@@ -265,7 +265,7 @@ sub _validator { $validator ||= JSON::Validator::OpenAPI::Dancer2->new }
 
 =over
 
-=item * L<Mojolicious::Plugin::Swagger2> A similar plugin for the L<Mojolicious> Web framework
+=item * L<Mojolicious::Plugin::OpenAPI> A similar plugin for the L<Mojolicious> Web framework
 
 =item * L<http://swagger.io/>: Website of the Swagger alias OpenAPI Specification
 

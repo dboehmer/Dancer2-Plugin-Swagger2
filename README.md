@@ -24,7 +24,7 @@ version 0.003\_900
 
     dance;
 
-`example/swagger2.yaml`:
+`example/openapi.yaml`:
 
     ---
     swagger: "2.0"
@@ -75,7 +75,7 @@ Import routes from OpenAPI file. Named arguments:
 ## default\_controller\_factory
 
 Default method for finding a callback for a given `operationId`. Can be
-overriden by the `controller_factory` argument to `swagger2` or config option.
+overriden by the `controller_factory` argument to `openapi()` or config option.
 
 The default uses the `controller` argument/config option or the name of
 the app (possibly with `::Controller` appended). If the `operationId`
@@ -87,7 +87,7 @@ and returns a coderef on the first match.
 
 # SEE ALSO
 
-- [Mojolicious::Plugin::Swagger2](https://metacpan.org/pod/Mojolicious::Plugin::Swagger2) A similar plugin for the [Mojolicious](https://metacpan.org/pod/Mojolicious) Web framework
+- [Mojolicious::Plugin::OpenAPI](https://metacpan.org/pod/Mojolicious::Plugin::OpenAPI) A similar plugin for the [Mojolicious](https://metacpan.org/pod/Mojolicious) Web framework
 - [http://swagger.io/](http://swagger.io/): Website of the Swagger alias OpenAPI Specification
 
 # ACKNOWLEDGEMENT
